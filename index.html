@@ -97,7 +97,7 @@ p{margin:0}
 
 /* marquee of passing cards */
 .marquee{overflow:hidden;border-block:1px solid var(--line);background:rgba(10,16,25,.6);position:relative;z-index:1}
-.marquee-track{display:flex;gap:.8rem;width:max-content;padding-block:.9rem;animation:slide 38s linear infinite}
+.marquee-track{display:flex;gap:.8rem;width:max-content;padding-block:.9rem;animation:slide 80s linear infinite}
 .marquee:hover .marquee-track{animation-play-state:paused}
 .chip{display:inline-flex;align-items:center;gap:.6rem;padding:.55rem 1rem;border:1px solid var(--line2);border-radius:999px;font-weight:600;font-size:.9rem;white-space:nowrap;background:var(--panel)}
 .chip i{width:8px;height:8px;border-radius:50%;background:var(--sun);box-shadow:0 0 12px var(--sun)}
@@ -450,7 +450,7 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;
   /* feed of real messages */
   var cards=[].slice.call(document.querySelectorAll('.feed-card')),fi=0;
   function cycle(){cards.forEach(function(c,i){c.className='feed-card';var k=(i-fi+cards.length)%cards.length;if(k<3)c.classList.add('is-'+k)});fi=(fi+1)%cards.length}
-  if(!reduce)setInterval(cycle,3200);
+  if(!reduce)setInterval(cycle,7000);
 
   /* marquee: duplicate once so the loop is seamless */
   var mq=document.getElementById('mq'); mq.innerHTML+=mq.innerHTML;
@@ -460,9 +460,10 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;
   function step(){var c=track.firstElementChild;return c.getBoundingClientRect().width+16}
   document.getElementById('next').onclick=function(){track.scrollBy({left:step(),behavior:'smooth'})};
   document.getElementById('prev').onclick=function(){track.scrollBy({left:-step(),behavior:'smooth'})};
-  var hold=false;['pointerdown','pointerenter','touchstart'].forEach(function(ev){track.addEventListener(ev,function(){hold=true},{passive:true})});
-  ['pointerleave','pointerup','touchend'].forEach(function(ev){track.addEventListener(ev,function(){hold=false},{passive:true})});
-  if(!reduce)setInterval(function(){if(hold)return;var max=track.scrollWidth-track.clientWidth;if(track.scrollLeft>=max-4)track.scrollTo({left:0,behavior:'smooth'});else track.scrollBy({left:step(),behavior:'smooth'})},4200);
+  var hold=false;['pointerdown','pointerenter','touchstart','wheel'].forEach(function(ev){track.addEventListener(ev,function(){hold=true},{passive:true})});
+  ['pointerleave'].forEach(function(ev){track.addEventListener(ev,function(){hold=false},{passive:true})});
+  document.getElementById('prev').addEventListener('click',function(){hold=true});document.getElementById('next').addEventListener('click',function(){hold=true});
+  if(!reduce)setInterval(function(){if(hold)return;var max=track.scrollWidth-track.clientWidth;if(track.scrollLeft>=max-4)track.scrollTo({left:0,behavior:'smooth'});else track.scrollBy({left:step(),behavior:'smooth'})},9000);
 
   /* hero: perspective field of tracking solar panels + energy particles */
   var cv=document.getElementById('field'),ctx=cv.getContext('2d'),W,H,dpr=Math.min(devicePixelRatio||1,2),t0=performance.now(),parts=[];
