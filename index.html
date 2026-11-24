@@ -496,5 +496,33 @@ footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:1rem;
   requestAnimationFrame(frame);
 })();
 </script>
+<!-- EVOX Pixel (1510263621201478): só liga depois do aceite do visitante -->
+<style>
+.consent{position:fixed;left:12px;right:12px;bottom:12px;z-index:60;display:none;gap:.8rem;align-items:center;flex-wrap:wrap;justify-content:space-between;background:#0f1826;border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:.8rem 1rem;font:14px/1.4 system-ui,sans-serif;color:#9aa8bd;max-width:640px;margin:0 auto}
+.consent.on{display:flex}.consent button{font:inherit;font-weight:700;cursor:pointer;border-radius:999px;padding:.45rem 1rem;border:1px solid rgba(255,255,255,.16);background:transparent;color:#f3f6fb}.consent button.ok{background:#ffb21a;color:#06090f;border-color:transparent}
+</style>
+<div class="consent" id="consent" role="dialog" aria-live="polite" aria-label="Medição de anúncios"><span>Usamos o Pixel da Meta para medir os anúncios desta página. Só ligamos se você aceitar.</span><span><button type="button" id="cNo">Recusar</button> <button type="button" class="ok" id="cOk">Aceitar</button></span></div>
+<script>
+(function(){
+  var PIXEL='1510263621201478',CK='evox_pixel_consent',ligado=false,caixa=document.getElementById('consent');
+  function ligar(){
+    if(ligado)return; ligado=true;
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init',PIXEL); fbq('track','PageView');
+  }
+  var salvo=null; try{salvo=localStorage.getItem(CK)}catch(e){}
+  if(salvo==='sim')ligar(); else if(salvo!=='nao')caixa.classList.add('on');
+  function decidir(v){try{localStorage.setItem(CK,v)}catch(e){} caixa.classList.remove('on'); if(v==='sim')ligar()}
+  document.getElementById('cOk').onclick=function(){decidir('sim')}; document.getElementById('cNo').onclick=function(){decidir('nao')};
+  var ultimo=0;
+  document.addEventListener('click',function(ev){
+    var a=ev.target.closest&&ev.target.closest('a[href*="wa.me/"]'); if(!a||!ligado||!window.fbq)return;
+    var agora=Date.now(); if(agora-ultimo<1500)return; ultimo=agora;
+    fbq('trackCustom','WhatsAppClick',{origem:(a.closest('section,header,footer,nav')||{id:'flutuante'}).id||'pagina'});
+  },true);
+})();
+</script>
+<noscript><img height="1" width="1" style="display:none" alt="" src="https://www.facebook.com/tr?id=1510263621201478&ev=PageView&noscript=1"/></noscript>
+<!-- /EVOX Pixel -->
 </body>
 </html>
